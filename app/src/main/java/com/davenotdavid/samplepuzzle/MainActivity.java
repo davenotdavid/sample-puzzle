@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static int mColumnWidth, mColumnHeight;
 
-    private String[] tileList;
+    private int[] tileListIndexes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +34,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         init();
-
-        scramble();
-
-        setDimensions();
+        scrambleTileBoard();
+        setTileBoardDimensions();
     }
 
     private void init() {
-        mGridView = (GestureDetectGridView) findViewById(R.id.grid);
+        mGridView = (GestureDetectGridView) findViewById(R.id.gesture_detect_grid_view);
         mGridView.setNumColumns(COLUMNS);
         mGridView.setOnSwipeListener(new GestureDetectGridView.OnSwipeListener() {
             @Override public void onSwipe(SwipeDirections direction, int position) {
@@ -49,28 +47,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        tileList = new String[DIMENSIONS];
+        tileListIndexes = new int[DIMENSIONS];
         for (int i = 0; i < DIMENSIONS; i++) {
-            tileList[i] = String.valueOf(i);
+            tileListIndexes[i] = i;
         }
     }
 
-    private void scramble() {
+    private void scrambleTileBoard() {
         int index;
-        String temp;
+        int tempIndex;
         Random random = new Random();
 
-        for (int i = tileList.length - 1; i > 0; i--) {
+        for (int i = tileListIndexes.length - 1; i > 0; i--) {
             index = random.nextInt(i + 1);
-            temp = tileList[index];
-            tileList[index] = tileList[i];
-            tileList[i] = temp;
+            tempIndex = tileListIndexes[index];
+            tileListIndexes[index] = tileListIndexes[i];
+            tileListIndexes[i] = tempIndex;
         }
     }
 
-    private void setDimensions() {
-        ViewTreeObserver vto = mGridView.getViewTreeObserver();
-        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+    private void setTileBoardDimensions() {
+        ViewTreeObserver observer = mGridView.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 mGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -83,15 +81,14 @@ public class MainActivity extends AppCompatActivity {
                 mColumnWidth = displayWidth / COLUMNS;
                 mColumnHeight = requiredHeight / COLUMNS;
 
-                display();
+                displayTileBoard();
             }
         });
     }
 
     private int getStatusBarHeight(Context context) {
         int result = 0;
-        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen",
-                "android");
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
 
         if (resourceId > 0) {
             result = context.getResources().getDimensionPixelSize(resourceId);
@@ -100,43 +97,37 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    private void display() {
-        ArrayList<Button> buttons = new ArrayList<>();
-        Button button;
+    /**
+     * Used for both init and every time a new swap move is made by the user.
+     */
+    private void displayTileBoard() {
+        ArrayList<ImageView> tileImages = new ArrayList<>();
+        ImageView tileImage;
 
-        for (int i = 0; i < tileList.length; i++) {
-            button = new Button(this);
+        for (int i : tileListIndexes) {
+            tileImage = new ImageView(this);
 
-            if (tileList[i].equals("0"))
-                button.setBackgroundResource(R.drawable.pigeon_piece1);
-            else if (tileList[i].equals("1"))
-                button.setBackgroundResource(R.drawable.pigeon_piece2);
-            else if (tileList[i].equals("2"))
-                button.setBackgroundResource(R.drawable.pigeon_piece3);
-            else if (tileList[i].equals("3"))
-                button.setBackgroundResource(R.drawable.pigeon_piece4);
-            else if (tileList[i].equals("4"))
-                button.setBackgroundResource(R.drawable.pigeon_piece5);
-            else if (tileList[i].equals("5"))
-                button.setBackgroundResource(R.drawable.pigeon_piece6);
-            else if (tileList[i].equals("6"))
-                button.setBackgroundResource(R.drawable.pigeon_piece7);
-            else if (tileList[i].equals("7"))
-                button.setBackgroundResource(R.drawable.pigeon_piece8);
-            else if (tileList[i].equals("8"))
-                button.setBackgroundResource(R.drawable.pigeon_piece9);
+            if (i == 0) tileImage.setBackgroundResource(R.drawable.pigeon_piece1);
+            else if (i == 1) tileImage.setBackgroundResource(R.drawable.pigeon_piece2);
+            else if (i == 2) tileImage.setBackgroundResource(R.drawable.pigeon_piece3);
+            else if (i == 3) tileImage.setBackgroundResource(R.drawable.pigeon_piece4);
+            else if (i == 4) tileImage.setBackgroundResource(R.drawable.pigeon_piece5);
+            else if (i == 5) tileImage.setBackgroundResource(R.drawable.pigeon_piece6);
+            else if (i == 6) tileImage.setBackgroundResource(R.drawable.pigeon_piece7);
+            else if (i == 7) tileImage.setBackgroundResource(R.drawable.pigeon_piece8);
+            else if (i == 8) tileImage.setBackgroundResource(R.drawable.pigeon_piece9);
 
-            buttons.add(button);
+            tileImages.add(tileImage);
         }
 
-        mGridView.setAdapter(new CustomAdapter(buttons, mColumnWidth, mColumnHeight));
+        mGridView.setAdapter(new TileImageAdapter(tileImages, mColumnWidth, mColumnHeight));
     }
 
     private void swap(int currentPosition, int swap) {
-        String newPosition = tileList[currentPosition + swap];
-        tileList[currentPosition + swap] = tileList[currentPosition];
-        tileList[currentPosition] = newPosition;
-        display();
+        int newPosition = tileListIndexes[currentPosition + swap];
+        tileListIndexes[currentPosition + swap] = tileListIndexes[currentPosition];
+        tileListIndexes[currentPosition] = newPosition;
+        displayTileBoard();
 
         if (isSolved()) Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
     }
@@ -153,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
             else if (direction == SwipeDirections.DOWN) swap(position, COLUMNS);
             else if (direction == SwipeDirections.RIGHT) swap(position, 1);
             else Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
-
         // Upper-right-corner tile
         } else if (position == COLUMNS - 1) {
             if (direction == SwipeDirections.LEFT) swap(position, -1);
@@ -199,8 +189,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean isSolved() {
         boolean solved = false;
 
-        for (int i = 0; i < tileList.length; i++) {
-            if (tileList[i].equals(String.valueOf(i))) {
+        for (int i = 0; i < tileListIndexes.length; i++) {
+            if (tileListIndexes[i] == i) {
                 solved = true;
             } else {
                 solved = false;

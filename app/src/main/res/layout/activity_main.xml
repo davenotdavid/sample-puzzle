@@ -2,7 +2,7 @@
 <com.davenotdavid.samplepuzzle.GestureDetectGridView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/grid"
+    android:id="@+id/gesture_detect_grid_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.davenotdavid.samplepuzzle.MainActivity"
