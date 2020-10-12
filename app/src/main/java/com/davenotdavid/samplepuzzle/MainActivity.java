@@ -12,7 +12,7 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static GestureDetectGridView mGridView;
+    private GestureDetectGridView mGridView;
 
     private static final int COLUMNS = 3;
     private static final int DIMENSIONS = COLUMNS * COLUMNS;
@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String left = "left";
     public static final String right = "right";
 
-    private static String[] tileList;
+    private String[] tileList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +41,11 @@ public class MainActivity extends AppCompatActivity {
     private void init() {
         mGridView = (GestureDetectGridView) findViewById(R.id.grid);
         mGridView.setNumColumns(COLUMNS);
+        mGridView.setOnSwipeListener(new GestureDetectGridView.OnSwipeListener() {
+            @Override public void onSwipe(String direction, int position) {
+                moveTiles(direction, position);
+            }
+        });
 
         tileList = new String[DIMENSIONS];
         for (int i = 0; i < DIMENSIONS; i++) {
@@ -76,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 mColumnWidth = displayWidth / COLUMNS;
                 mColumnHeight = requiredHeight / COLUMNS;
 
-                display(getApplicationContext());
+                display();
             }
         });
     }
@@ -93,12 +98,12 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    private static void display(Context context) {
+    private void display() {
         ArrayList<Button> buttons = new ArrayList<>();
         Button button;
 
         for (int i = 0; i < tileList.length; i++) {
-            button = new Button(context);
+            button = new Button(this);
 
             if (tileList[i].equals("0"))
                 button.setBackgroundResource(R.drawable.pigeon_piece1);
@@ -125,81 +130,80 @@ public class MainActivity extends AppCompatActivity {
         mGridView.setAdapter(new CustomAdapter(buttons, mColumnWidth, mColumnHeight));
     }
 
-    private static void swap(Context context, int currentPosition, int swap) {
+    private void swap(int currentPosition, int swap) {
         String newPosition = tileList[currentPosition + swap];
         tileList[currentPosition + swap] = tileList[currentPosition];
         tileList[currentPosition] = newPosition;
-        display(context);
+        display();
 
-        if (isSolved()) Toast.makeText(context, "YOU WIN!", Toast.LENGTH_SHORT).show();
+        if (isSolved()) Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show();
     }
 
-    public static void moveTiles(Context context, String direction, int position) {
+    private void moveTiles(String direction, int position) {
 
         // Upper-left-corner tile
         if (position == 0) {
-
-            if (direction.equals(right)) swap(context, position, 1);
-            else if (direction.equals(down)) swap(context, position, COLUMNS);
-            else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
+            if (direction.equals(right)) swap(position, 1);
+            else if (direction.equals(down)) swap(position, COLUMNS);
+            else Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
 
         // Upper-center tiles
         } else if (position > 0 && position < COLUMNS - 1) {
-            if (direction.equals(left)) swap(context, position, -1);
-            else if (direction.equals(down)) swap(context, position, COLUMNS);
-            else if (direction.equals(right)) swap(context, position, 1);
-            else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
+            if (direction.equals(left)) swap(position, -1);
+            else if (direction.equals(down)) swap(position, COLUMNS);
+            else if (direction.equals(right)) swap(position, 1);
+            else Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
 
         // Upper-right-corner tile
         } else if (position == COLUMNS - 1) {
-            if (direction.equals(left)) swap(context, position, -1);
-            else if (direction.equals(down)) swap(context, position, COLUMNS);
-            else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
+            if (direction.equals(left)) swap(position, -1);
+            else if (direction.equals(down)) swap(position, COLUMNS);
+            else Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
 
         // Left-side tiles
         } else if (position > COLUMNS - 1 && position < DIMENSIONS - COLUMNS &&
                 position % COLUMNS == 0) {
-            if (direction.equals(up)) swap(context, position, -COLUMNS);
-            else if (direction.equals(right)) swap(context, position, 1);
-            else if (direction.equals(down)) swap(context, position, COLUMNS);
-            else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
+            if (direction.equals(up)) swap(position, -COLUMNS);
+            else if (direction.equals(right)) swap(position, 1);
+            else if (direction.equals(down)) swap(position, COLUMNS);
+            else Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
 
         // Right-side AND bottom-right-corner tiles
         } else if (position == COLUMNS * 2 - 1 || position == COLUMNS * 3 - 1) {
-            if (direction.equals(up)) swap(context, position, -COLUMNS);
-            else if (direction.equals(left)) swap(context, position, -1);
+            if (direction.equals(up)) swap(position, -COLUMNS);
+            else if (direction.equals(left)) swap(position, -1);
             else if (direction.equals(down)) {
 
                 // Tolerates only the right-side tiles to swap downwards as opposed to the bottom-
                 // right-corner tile.
-                if (position <= DIMENSIONS - COLUMNS - 1) swap(context, position,
+                if (position <= DIMENSIONS - COLUMNS - 1) swap(position,
                         COLUMNS);
-                else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
-            } else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
+            } else Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
 
         // Bottom-left corner tile
         } else if (position == DIMENSIONS - COLUMNS) {
-            if (direction.equals(up)) swap(context, position, -COLUMNS);
-            else if (direction.equals(right)) swap(context, position, 1);
-            else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
+            if (direction.equals(up)) swap(position, -COLUMNS);
+            else if (direction.equals(right)) swap(position, 1);
+            else Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
 
         // Bottom-center tiles
         } else if (position < DIMENSIONS - 1 && position > DIMENSIONS - COLUMNS) {
-            if (direction.equals(up)) swap(context, position, -COLUMNS);
-            else if (direction.equals(left)) swap(context, position, -1);
-            else if (direction.equals(right)) swap(context, position, 1);
-            else Toast.makeText(context, "Invalid move", Toast.LENGTH_SHORT).show();
+            if (direction.equals(up)) swap(position, -COLUMNS);
+            else if (direction.equals(left)) swap(position, -1);
+            else if (direction.equals(right)) swap(position, 1);
+            else Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show();
 
         // Center tiles
         } else {
-            if (direction.equals(up)) swap(context, position, -COLUMNS);
-            else if (direction.equals(left)) swap(context, position, -1);
-            else if (direction.equals(right)) swap(context, position, 1);
-            else swap(context, position, COLUMNS);
+            if (direction.equals(up)) swap(position, -COLUMNS);
+            else if (direction.equals(left)) swap(position, -1);
+            else if (direction.equals(right)) swap(position, 1);
+            else swap(position, COLUMNS);
         }
     }
 
-    private static boolean isSolved() {
+    private boolean isSolved() {
         boolean solved = false;
 
         for (int i = 0; i < tileList.length; i++) {
