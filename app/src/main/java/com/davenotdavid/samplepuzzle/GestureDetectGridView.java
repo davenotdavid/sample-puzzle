@@ -78,7 +78,7 @@ public class GestureDetectGridView extends GridView {
     }
 
     interface OnSwipeListener {
-        void onSwipe(String direction, int position);
+        void onSwipe(MainActivity.SwipeDirections direction, int position);
     }
 
     private void init(final Context context) {
@@ -100,18 +100,18 @@ public class GestureDetectGridView extends GridView {
                         return false;
                     }
                     if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE) {
-                        mOnSwipeListener.onSwipe(MainActivity.up, position);
+                        mOnSwipeListener.onSwipe(MainActivity.SwipeDirections.UP, position);
                     } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE) {
-                        mOnSwipeListener.onSwipe(MainActivity.down, position);
+                        mOnSwipeListener.onSwipe(MainActivity.SwipeDirections.DOWN, position);
                     }
                 } else {
                     if (Math.abs(velocityX) < SWIPE_THRESHOLD_VELOCITY) {
                         return false;
                     }
                     if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE) {
-                        mOnSwipeListener.onSwipe(MainActivity.left, position);
+                        mOnSwipeListener.onSwipe(MainActivity.SwipeDirections.LEFT, position);
                     } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE) {
-                        mOnSwipeListener.onSwipe(MainActivity.right, position);
+                        mOnSwipeListener.onSwipe(MainActivity.SwipeDirections.RIGHT, position);
                     }
                 }
 
