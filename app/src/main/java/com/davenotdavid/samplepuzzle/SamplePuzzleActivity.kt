@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.davenotdavid.samplepuzzle.GestureDetectGridView.OnSwipeListener
+import kotlinx.android.synthetic.main.activity_sample_puzzle.*
 import java.util.Random
 
 enum class SwipeDirections {
@@ -16,14 +18,13 @@ enum class SwipeDirections {
 class SamplePuzzleActivity : AppCompatActivity() {
 
     companion object {
-        private const val COLUMNS = 3
-        private const val DIMENSIONS = COLUMNS * COLUMNS
+        private const val TOTAL_COLUMNS = 3
+        private const val DIMENSIONS = TOTAL_COLUMNS * TOTAL_COLUMNS
 
         private var boardColumnWidth = 0
         private var boardColumnHeight = 0
     }
 
-    private lateinit var gestureDetectGridView: GestureDetectGridView
     private val tileListIndexes = mutableListOf<Int>()
 
     private val isSolved: Boolean
@@ -51,13 +52,14 @@ class SamplePuzzleActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        gestureDetectGridView = findViewById(R.id.gesture_detect_grid_view)
-        gestureDetectGridView.numColumns = COLUMNS
-        gestureDetectGridView.setOnSwipeListener(object : OnSwipeListener {
-            override fun onSwipe(direction: SwipeDirections, position: Int) {
-                moveTiles(direction, position)
-            }
-        })
+        gesture_detect_grid_view.apply {
+            numColumns = TOTAL_COLUMNS
+            setOnSwipeListener(object : OnSwipeListener {
+                override fun onSwipe(direction: SwipeDirections, position: Int) {
+                    moveTiles(direction, position)
+                }
+            })
+        }
 
         tileListIndexes += 0 until DIMENSIONS
     }
@@ -76,18 +78,18 @@ class SamplePuzzleActivity : AppCompatActivity() {
     }
 
     private fun setTileBoardDimensions() {
-        val observer = gestureDetectGridView.viewTreeObserver
+        val observer = gesture_detect_grid_view.viewTreeObserver
         observer.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                gestureDetectGridView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                gesture_detect_grid_view.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
-                val displayWidth = gestureDetectGridView.measuredWidth
-                val displayHeight = gestureDetectGridView.measuredHeight
+                val displayWidth = gesture_detect_grid_view.measuredWidth
+                val displayHeight = gesture_detect_grid_view.measuredHeight
                 val statusbarHeight = getStatusBarHeight(applicationContext)
                 val requiredHeight = displayHeight - statusbarHeight
 
-                boardColumnWidth = displayWidth / COLUMNS
-                boardColumnHeight = requiredHeight / COLUMNS
+                boardColumnWidth = displayWidth / TOTAL_COLUMNS
+                boardColumnHeight = requiredHeight / TOTAL_COLUMNS
 
                 displayTileBoard()
             }
@@ -130,88 +132,94 @@ class SamplePuzzleActivity : AppCompatActivity() {
             tileImages.add(tileImage)
         }
 
-        gestureDetectGridView.adapter = TileImageAdapter(tileImages, boardColumnWidth, boardColumnHeight)
+        gesture_detect_grid_view.adapter = TileImageAdapter(tileImages, boardColumnWidth, boardColumnHeight)
     }
 
-    private fun swap(currentPosition: Int, swap: Int) {
-        val newPosition = tileListIndexes[currentPosition + swap]
-        tileListIndexes[currentPosition + swap] = tileListIndexes[currentPosition]
-        tileListIndexes[currentPosition] = newPosition
-        displayTileBoard()
-
-        if (isSolved) Toast.makeText(this, "YOU WIN!", Toast.LENGTH_SHORT).show()
+    private fun displayToast(@StringRes textResId: Int) {
+        Toast.makeText(this, getString(textResId), Toast.LENGTH_SHORT).show()
     }
 
     private fun moveTiles(direction: SwipeDirections, position: Int) {
         // Upper-left-corner tile
         if (position == 0) {
             when (direction) {
-                SwipeDirections.RIGHT -> swap(position, 1)
-                SwipeDirections.DOWN -> swap(position, COLUMNS)
-                else -> Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show()
+                SwipeDirections.RIGHT -> swapTile(position, 1)
+                SwipeDirections.DOWN -> swapTile(position, TOTAL_COLUMNS)
+                else -> displayToast(R.string.invalid_move)
             }
         // Upper-center tiles
-        } else if (position > 0 && position < COLUMNS - 1) {
+        } else if (position > 0 && position < TOTAL_COLUMNS - 1) {
             when (direction) {
-                SwipeDirections.LEFT -> swap(position, -1)
-                SwipeDirections.DOWN -> swap(position, COLUMNS)
-                SwipeDirections.RIGHT -> swap(position, 1)
-                else -> Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show()
+                SwipeDirections.LEFT -> swapTile(position, -1)
+                SwipeDirections.DOWN -> swapTile(position, TOTAL_COLUMNS)
+                SwipeDirections.RIGHT -> swapTile(position, 1)
+                else -> displayToast(R.string.invalid_move)
             }
         // Upper-right-corner tile
-        } else if (position == COLUMNS - 1) {
+        } else if (position == TOTAL_COLUMNS - 1) {
             when (direction) {
-                SwipeDirections.LEFT -> swap(position, -1)
-                SwipeDirections.DOWN -> swap(position, COLUMNS)
-                else -> Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show()
+                SwipeDirections.LEFT -> swapTile(position, -1)
+                SwipeDirections.DOWN -> swapTile(position, TOTAL_COLUMNS)
+                else -> displayToast(R.string.invalid_move)
             }
         // Left-side tiles
-        } else if (position > COLUMNS - 1 && position < DIMENSIONS - COLUMNS && position % COLUMNS == 0) {
+        } else if (position > TOTAL_COLUMNS - 1 && position < DIMENSIONS - TOTAL_COLUMNS && position % TOTAL_COLUMNS == 0) {
             when (direction) {
-                SwipeDirections.UP -> swap(position, -COLUMNS)
-                SwipeDirections.RIGHT -> swap(position, 1)
-                SwipeDirections.DOWN -> swap(position, COLUMNS)
-                else -> Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show()
+                SwipeDirections.UP -> swapTile(position, -TOTAL_COLUMNS)
+                SwipeDirections.RIGHT -> swapTile(position, 1)
+                SwipeDirections.DOWN -> swapTile(position, TOTAL_COLUMNS)
+                else -> displayToast(R.string.invalid_move)
             }
         // Right-side AND bottom-right-corner tiles
-        } else if (position == COLUMNS * 2 - 1 || position == COLUMNS * 3 - 1) {
+        } else if (position == TOTAL_COLUMNS * 2 - 1 || position == TOTAL_COLUMNS * 3 - 1) {
             when (direction) {
-                SwipeDirections.UP -> swap(position, -COLUMNS)
-                SwipeDirections.LEFT -> swap(position, -1)
+                SwipeDirections.UP -> swapTile(position, -TOTAL_COLUMNS)
+                SwipeDirections.LEFT -> swapTile(position, -1)
                 SwipeDirections.DOWN -> {
                     // Tolerates only the right-side tiles to swap downwards as opposed to the bottom-
                     // right-corner tile.
-                    if (position <= DIMENSIONS - COLUMNS - 1) {
-                        swap(position, COLUMNS)
+                    if (position <= DIMENSIONS - TOTAL_COLUMNS - 1) {
+                        swapTile(position, TOTAL_COLUMNS)
                     } else {
-                        Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show()
+                        displayToast(R.string.invalid_move)
                     }
                 }
-                else -> Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show()
+                else -> displayToast(R.string.invalid_move)
             }
         // Bottom-left corner tile
-        } else if (position == DIMENSIONS - COLUMNS) {
+        } else if (position == DIMENSIONS - TOTAL_COLUMNS) {
             when (direction) {
-                SwipeDirections.UP -> swap(position, -COLUMNS)
-                SwipeDirections.RIGHT -> swap(position, 1)
-                else -> Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show()
+                SwipeDirections.UP -> swapTile(position, -TOTAL_COLUMNS)
+                SwipeDirections.RIGHT -> swapTile(position, 1)
+                else -> displayToast(R.string.invalid_move)
             }
         // Bottom-center tiles
-        } else if (position < DIMENSIONS - 1 && position > DIMENSIONS - COLUMNS) {
+        } else if (position < DIMENSIONS - 1 && position > DIMENSIONS - TOTAL_COLUMNS) {
             when (direction) {
-                SwipeDirections.UP -> swap(position, -COLUMNS)
-                SwipeDirections.LEFT -> swap(position, -1)
-                SwipeDirections.RIGHT -> swap(position, 1)
-                else -> Toast.makeText(this, "Invalid move", Toast.LENGTH_SHORT).show()
+                SwipeDirections.UP -> swapTile(position, -TOTAL_COLUMNS)
+                SwipeDirections.LEFT -> swapTile(position, -1)
+                SwipeDirections.RIGHT -> swapTile(position, 1)
+                else -> displayToast(R.string.invalid_move)
             }
         // Center tiles
         } else {
             when (direction) {
-                SwipeDirections.UP -> swap(position, -COLUMNS)
-                SwipeDirections.LEFT -> swap(position, -1)
-                SwipeDirections.RIGHT -> swap(position, 1)
-                else -> swap(position, COLUMNS)
+                SwipeDirections.UP -> swapTile(position, -TOTAL_COLUMNS)
+                SwipeDirections.LEFT -> swapTile(position, -1)
+                SwipeDirections.RIGHT -> swapTile(position, 1)
+                else -> swapTile(position, TOTAL_COLUMNS)
             }
+        }
+    }
+
+    private fun swapTile(currentPosition: Int, swap: Int) {
+        val newPosition = tileListIndexes[currentPosition + swap]
+        tileListIndexes[currentPosition + swap] = tileListIndexes[currentPosition]
+        tileListIndexes[currentPosition] = newPosition
+        displayTileBoard()
+
+        if (isSolved) {
+            displayToast(R.string.winner)
         }
     }
 }
