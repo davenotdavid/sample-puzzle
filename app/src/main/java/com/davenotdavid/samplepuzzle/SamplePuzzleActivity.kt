@@ -7,13 +7,13 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.davenotdavid.samplepuzzle.GestureDetectGridView.OnSwipeListener
-import java.util.*
+import java.util.Random
 
 enum class SwipeDirections {
     UP, DOWN, LEFT, RIGHT
 }
 
-class MainActivity : AppCompatActivity() {
+class SamplePuzzleActivity : AppCompatActivity() {
 
     companion object {
         private const val COLUMNS = 3
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_sample_puzzle)
 
         init()
         scrambleTileBoard()

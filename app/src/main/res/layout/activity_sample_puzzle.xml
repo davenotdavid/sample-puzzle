@@ -5,5 +5,5 @@
     android:id="@+id/gesture_detect_grid_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.davenotdavid.samplepuzzle.MainActivity"
+    tools:context="com.davenotdavid.samplepuzzle.SamplePuzzleActivity"
     />
