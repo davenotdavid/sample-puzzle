@@ -1,7 +1,7 @@
 package com.davenotdavid.samplepuzzle;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        mGridView = (GestureDetectGridView) findViewById(R.id.gesture_detect_grid_view);
+        mGridView = findViewById(R.id.gesture_detect_grid_view);
         mGridView.setNumColumns(COLUMNS);
         mGridView.setOnSwipeListener(new GestureDetectGridView.OnSwipeListener() {
             @Override public void onSwipe(SwipeDirections direction, int position) {
