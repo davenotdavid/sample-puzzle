@@ -1,5 +1,5 @@
 # 2D-Puzzle Sample
-**- UPDATE AS OF 12/4/2020: Considering that this project is pretty old and it's now 2020, I've pushed out a branch that contains refactored code (i.e. newer SDK versioning, AndroidX migration, Kotlin converted, a more OOP approach, and etc.) here: https://github.com/DaveNOTDavid/sample-puzzle/tree/refactor_attempt**
+**- UPDATE AS OF 10/12/2020: Considering that this project is pretty old and it's now 2020, I've pushed out a branch that contains refactored code (i.e. newer SDK versioning, AndroidX migration, Kotlin converted, a more OOP approach, and etc.) here: https://github.com/DaveNOTDavid/sample-puzzle/tree/refactor_attempt**
 
 Sample project that's basically a 2D-puzzle with a Bejeweled-like swipe UI that's responsive for all Android device screens.
 
