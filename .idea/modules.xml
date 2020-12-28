@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/AndroidStudioProjects.sample-puzzle.iml" filepath="$PROJECT_DIR$/.idea/modules/AndroidStudioProjects.sample-puzzle.iml" />
       <module fileurl="file://$PROJECT_DIR$/SamplePuzzle.iml" filepath="$PROJECT_DIR$/SamplePuzzle.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/sample-puzzle.iml" filepath="$PROJECT_DIR$/.idea/modules/sample-puzzle.iml" group="sample-puzzle" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/sample-puzzle-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/sample-puzzle-app.iml" group="sample-puzzle/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/sample-puzzle.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/sample-puzzle.app.iml" />
     </modules>
   </component>
 </project>

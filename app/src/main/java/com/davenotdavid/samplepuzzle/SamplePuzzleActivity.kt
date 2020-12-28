@@ -118,15 +118,15 @@ class SamplePuzzleActivity : AppCompatActivity() {
             tileImage = ImageView(this)
 
             when (i) {
-                0 -> tileImage.setBackgroundResource(R.drawable.pigeon_piece1)
-                1 -> tileImage.setBackgroundResource(R.drawable.pigeon_piece2)
-                2 -> tileImage.setBackgroundResource(R.drawable.pigeon_piece3)
-                3 -> tileImage.setBackgroundResource(R.drawable.pigeon_piece4)
-                4 -> tileImage.setBackgroundResource(R.drawable.pigeon_piece5)
-                5 -> tileImage.setBackgroundResource(R.drawable.pigeon_piece6)
-                6 -> tileImage.setBackgroundResource(R.drawable.pigeon_piece7)
-                7 -> tileImage.setBackgroundResource(R.drawable.pigeon_piece8)
-                8 -> tileImage.setBackgroundResource(R.drawable.pigeon_piece9)
+                0 -> tileImage.setBackgroundResource(R.drawable.among_us_cyan_piece1)
+                1 -> tileImage.setBackgroundResource(R.drawable.among_us_cyan_piece2)
+                2 -> tileImage.setBackgroundResource(R.drawable.among_us_cyan_piece3)
+                3 -> tileImage.setBackgroundResource(R.drawable.among_us_cyan_piece4)
+                4 -> tileImage.setBackgroundResource(R.drawable.among_us_cyan_piece5)
+                5 -> tileImage.setBackgroundResource(R.drawable.among_us_cyan_piece6)
+                6 -> tileImage.setBackgroundResource(R.drawable.among_us_cyan_piece7)
+                7 -> tileImage.setBackgroundResource(R.drawable.among_us_cyan_piece8)
+                8 -> tileImage.setBackgroundResource(R.drawable.among_us_cyan_piece9)
             }
 
             tileImages.add(tileImage)
